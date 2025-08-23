@@ -117,7 +117,7 @@ export type AreaSearch = {
 
 export type Search = Partial<BaseSearch & (CircleSearch | AreaSearch)>
 
-export async function doSearchREAL(s: Search): Promise<Observation[]> {
+export async function doSearch(s: Search): Promise<Observation[]> {
     Object.keys(s).forEach(k => {
         // @ts-ignore
         s[k] = s[k].toString()
@@ -126,10 +126,12 @@ export async function doSearchREAL(s: Search): Promise<Observation[]> {
     const url = "http://localhost:8080/search?" + searchParams.toString()
     let response = await fetch(url)
 
+    // response.headers.append('Access-Control-Allow-Origin', "http://localhost:5173/")
+
     return response.json()
 }
 
-export async function doSearch(s: Search): Promise<Observation[]> {
+export async function doSearchFAKE(s: Search): Promise<Observation[]> {
     let result: Observation[] = []
     observations.forEach((o) => {
         if (s.style == o.style[0] || s.style == o.style[1] || s.style == o.style[2])

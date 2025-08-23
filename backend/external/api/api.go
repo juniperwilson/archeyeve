@@ -1,10 +1,12 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/juniperwilson/archeyeve/internal/database"
 )
@@ -54,41 +56,57 @@ func search(c *gin.Context) {
 	errs := []string{}
 
 	search.Style = c.Query("style")
-	lng1, err := strconv.ParseFloat(c.Query("lng1"), 64)
-	if err != nil {
-		errs = append(errs, err.Error())
+
+	if lng := c.Query("lng1"); lng != "" {
+		lng1, err := strconv.ParseFloat(lng, 64)
+		if err != nil {
+			errs = append(errs, err.Error())
+		}
+		search.Lng1 = lng1
 	}
-	search.Lng1 = lng1
-	lat1, err := strconv.ParseFloat(c.Query("lat1"), 64)
-	if err != nil {
-		errs = append(errs, err.Error())
+	if lat := c.Query("lat1"); lat != "" {
+		lat1, err := strconv.ParseFloat(lat, 64)
+		if err != nil {
+			errs = append(errs, err.Error())
+		}
+		search.Lat1 = lat1
 	}
-	search.Lat1 = lat1
-	lng2, err := strconv.ParseFloat(c.Query("lng2"), 64)
-	if err != nil {
-		errs = append(errs, err.Error())
+	if lng := c.Query("lng2"); lng != "" {
+		lng2, err := strconv.ParseFloat(lng, 64)
+		if err != nil {
+			errs = append(errs, err.Error())
+		}
+		search.Lng2 = lng2
 	}
-	search.Lng2 = lng2
-	lat2, err := strconv.ParseFloat(c.Query("lat2"), 64)
-	if err != nil {
-		errs = append(errs, err.Error())
+	if lat := c.Query("lat2"); lat != "" {
+		lat2, err := strconv.ParseFloat(lat, 64)
+		if err != nil {
+			errs = append(errs, err.Error())
+		}
+		search.Lat2 = lat2
 	}
-	search.Lat2 = lat2
-	radius, err := strconv.ParseFloat(c.Query("radius"), 64)
-	if err != nil {
-		errs = append(errs, err.Error())
+	if r := c.Query("radius"); r != "" {
+		radius, err := strconv.ParseFloat(r, 64)
+		if err != nil {
+			errs = append(errs, err.Error())
+		}
+		search.Radius = radius
 	}
-	search.Radius = radius
-	befyear, err := strconv.Atoi(c.Query("befyear"))
-	if err != nil {
-		errs = append(errs, err.Error())
+	if by := c.Query("befyear"); by != "" {
+		befyear, err := strconv.Atoi(by)
+		if err != nil {
+			errs = append(errs, err.Error())
+		}
+		search.BefYear = befyear
 	}
-	search.BefYear = befyear
-	aftyear, err := strconv.Atoi(c.Query("aftyear"))
-	if err != nil {
-		errs = append(errs, err.Error())
+	if ay := c.Query("aftyear"); ay != "" {
+		aftyear, err := strconv.Atoi(ay)
+		if err != nil {
+			errs = append(errs, err.Error())
+		}
+		search.AftYear = aftyear
 	}
-	search.AftYear = aftyear
+
 	if len(errs) != 0 {
 		c.Error(apiError{errs})
 		return
@@ -96,10 +114,15 @@ func search(c *gin.Context) {
 
 	errs = []string{}
 
+	fmt.Println(search)
+
 	obs, err := database.Find(&search)
 	if err != nil {
+		fmt.Println(err.Error())
 		errs = append(errs, "internal error")
 	}
+
+	fmt.Println(obs)
 
 	if len(errs) != 0 {
 		c.Error(apiError{errs})
@@ -111,6 +134,7 @@ func search(c *gin.Context) {
 
 func ApiRouting() *gin.Engine {
 	router := gin.Default()
+	router.Use(cors.Default())
 
 	router.GET("/search", search)
 	router.POST("/observation", createObservations)

@@ -9,8 +9,11 @@
         observation: Observation
     } = $props()
 
+    // let styles = observation.style.toString()
+    let styles = "no styles found"
     let src = `${FILE_PATH}${observation.id}/1.jpeg`
-    let alt = `${observation.style}`
+    let alt = styles
+
 </script>
 
 <div class="gridcontainer">
@@ -23,9 +26,9 @@
         <h1>{observation.name}</h1>
 
         {#if !observation.year}
-            <h2>{observation.style}</h2>
+            <h2>{styles}</h2>
         {:else}
-            <h2>{observation.style}, {observation.year}</h2>
+            <h2>{styles}, {observation.year}</h2>
         {/if}
     </div>
 </div>

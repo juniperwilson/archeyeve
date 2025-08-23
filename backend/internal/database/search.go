@@ -30,7 +30,7 @@ type Search struct {
 // years are optional
 func Find(s *Search) ([]*Observation, error) {
 
-	sb := sqlbuilder.PostgreSQL.NewSelectBuilder()
+	sb := sqlbuilder.NewSelectBuilder()
 	sb.Select(`*`).From(`observations`)
 
 	style := styleSearch(sb, s)
@@ -39,54 +39,26 @@ func Find(s *Search) ([]*Observation, error) {
 
 	//Valid search check
 	if region == "any" && style == "any" && era == "any" {
-		sb = sqlbuilder.PostgreSQL.NewSelectBuilder()
+		sb = sqlbuilder.NewSelectBuilder()
 		sb.Select("*").From("observations")
 	}
 
-	sql, args := sb.Build()
-	rows, err := dbpool.Query(context.Background(), sql, args)
+	sql, args := sb.BuildWithFlavor(sqlbuilder.PostgreSQL)
+	fmt.Println(sql)
+	fmt.Println(args)
+	rows, err := dbpool.Query(context.Background(), sql, args...)
 	if err != nil {
+		fmt.Println(err.Error())
 		return nil, err
 	}
+	fmt.Println(rows)
 
 	return pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Observation, error) {
 		var o Observation
 		err := row.Scan(&o.ID, &o.UserID, &o.Name, &o.Lng, &o.Lat, &o.Styles, &o.Year, &o.ImgCount)
+		fmt.Println(o)
 		return &o, err
 	})
-}
-
-func spatialSearch(sb *sqlbuilder.SelectBuilder, s *Search) string {
-
-	if s.Lat1 == 0.0 && s.Lng1 == 0.0 && s.Lat2 == 0.0 && s.Lng2 == 0.0 && s.Radius == 0.0 {
-		//No search region defined
-		return "any"
-	}
-	whereClause := sqlbuilder.NewWhereClause()
-	cond := sqlbuilder.NewCond()
-	whereClause.SetFlavor(sqlbuilder.PostgreSQL)
-
-	//Spatial search
-	if s.Lat1 != 0.0 && s.Lng1 != 0.0 && s.Lat2 != 0.0 && s.Lng2 != 0.0 && s.Radius == 0.0 {
-		//Square search
-		whereClause.AddWhereExpr(
-			cond.Args,
-			cond.Between(`lng`, s.Lng1, s.Lng2),
-			cond.Between(`lat`, s.Lat1, s.Lat2),
-		)
-		sb.AddWhereClause(whereClause)
-	} else if s.Lat1 != 0.0 && s.Lng1 != 0.0 && s.Lat2 == 0.0 && s.Lng2 == 0.0 && s.Radius != 0.0 {
-		//Round search
-		floatCoords := [3]float64{s.Lat1, s.Lng1, s.Radius}
-		cds := [3]string{}
-		for i, v := range floatCoords {
-			cds[i] = strconv.FormatFloat(v, 'f', -1, 64)
-		}
-		region := fmt.Sprintf("AND (((o.lng-%s)^2 + (o.lat-%s)^2) <= %s^2)", cds[0], cds[1], cds[2])
-		sb.SQL(region)
-	}
-
-	return ""
 }
 
 func styleSearch(sb *sqlbuilder.SelectBuilder, s *Search) string {
@@ -96,17 +68,51 @@ func styleSearch(sb *sqlbuilder.SelectBuilder, s *Search) string {
 	}
 
 	var sty Style = FindStyle(s.Style)
+	fmt.Println(sty)
 
 	whereClause := sqlbuilder.NewWhereClause()
 	cond := sqlbuilder.NewCond()
 	whereClause.SetFlavor(sqlbuilder.PostgreSQL)
 
-	subquery := fmt.Sprintf("SELECT style_id FROM paths WHERE path ~ %s", fmt.Sprintf("*.%d.*", sty.ID))
+	subquery := fmt.Sprintf("SELECT style_id FROM paths WHERE path ~ '%s'", fmt.Sprintf("*.%d.*", sty.ID))
 
 	// Set the flavor of the WhereClause to PostgreSQL.
 	whereClause.SetFlavor(sqlbuilder.PostgreSQL)
-	whereClause.AddWhereExpr(cond.Args, cond.Or(cond.In("style_ids[0]", subquery, cond.In("style_ids[1]", subquery), cond.In("style_ids[2]", subquery))))
+	whereClause.AddWhereExpr(cond.Args, cond.Or(cond.In("style_ids[0]", sqlbuilder.Raw(subquery)), cond.In("style_ids[1]", sqlbuilder.Raw(subquery)), cond.In("style_ids[2]", sqlbuilder.Raw(subquery))))
 	sb.AddWhereClause(whereClause)
+
+	return ""
+}
+
+func spatialSearch(sb *sqlbuilder.SelectBuilder, s *Search) string {
+
+	if s.Lat1 == 0 && s.Lng1 == 0 && s.Lat2 == 0 && s.Lng2 == 0 && s.Radius == 0 {
+		//No search region defined
+		return "any"
+	}
+	whereClause := sqlbuilder.NewWhereClause()
+	cond := sqlbuilder.NewCond()
+	whereClause.SetFlavor(sqlbuilder.PostgreSQL)
+
+	//Spatial search
+	if s.Lat1 != 0 && s.Lng1 != 0 && s.Lat2 != 0 && s.Lng2 != 0 && s.Radius == 0 {
+		//Square search
+		whereClause.AddWhereExpr(
+			cond.Args,
+			cond.Between(`lng`, s.Lng1, s.Lng2),
+			cond.Between(`lat`, s.Lat1, s.Lat2),
+		)
+		sb.AddWhereClause(whereClause)
+	} else if s.Lat1 != 0 && s.Lng1 != 0 && s.Lat2 == 0 && s.Lng2 == 0 && s.Radius != 0 {
+		//Round search
+		floatCoords := [3]float64{s.Lat1, s.Lng1, s.Radius}
+		cds := [3]string{}
+		for i, v := range floatCoords {
+			cds[i] = strconv.FormatFloat(v, 'f', -1, 64)
+		}
+		region := fmt.Sprintf("AND (((o.lng-%s)^2 + (o.lat-%s)^2) <= %s^2)", cds[0], cds[1], cds[2])
+		sb.SQL(region)
+	}
 
 	return ""
 }

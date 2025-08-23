@@ -26,6 +26,8 @@ func AddStyle(name string) {
 }
 
 func AddEdge(parent, child int) {
+	sb := sqlbuilder.PostgreSQL.NewSelectBuilder()
+	sb.Select()
 	_, err := dbpool.Exec(context.Background(), `SELECT add_edge($1, $2)`, parent, child)
 	if err != nil {
 		panic("failed to add edge: " + err.Error())
@@ -45,8 +47,9 @@ func FindStyle(name string) Style {
 	sb.Select("id").From("styles").Where(sb.EQ("name", name))
 	sql, args := sb.Build()
 
-	err := dbpool.QueryRow(context.Background(), sql, args).Scan(&id)
+	err := dbpool.QueryRow(context.Background(), sql, args...).Scan(&id)
 	if err != nil {
+		fmt.Println(err.Error())
 		panic("failed to find style: " + err.Error())
 	}
 

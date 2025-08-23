@@ -1,23 +1,30 @@
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+
 CREATE EXTENSION IF NOT EXISTS ltree;
 
-DROP TABLE IF EXISTS paths ;
-DROP TABLE IF EXISTS styles;
-DROP TABLE IF EXISTS observations;
 
--- CREATE TABLE IF NOT EXISTS users (
---     id SERIAL UNIQUE PRIMARY KEY NOT NULL
--- );
+DROP TABLE IF EXISTS paths CASCADE;
+DROP TABLE IF EXISTS styles CASCADE;
+DROP TABLE IF EXISTS observations CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 
--- CREATE TABLE IF NOT EXISTS observations (
---     id SERIAL UNIQUE PRIMARY KEY NOT NULL,
---     userid NOT NULL REFERENCES users(id),
---     name VARCHAR(100) NOT NULL,
---     lng NUMERIC(9,6) NOT NULL,
---     lat NUMERIC(9,6) NOT NULL,
---     style_ids INTEGER[3] NOT NULL,
---     year NUMERIC(4),
---     img_count INTEGER NOT NULL
--- );
+
+
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL UNIQUE PRIMARY KEY NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS observations (
+    id SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    userid INTEGER NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    lng NUMERIC(9,6) NOT NULL,
+    lat NUMERIC(9,6) NOT NULL,
+    style_ids VARCHAR(100)[3],
+    year NUMERIC(4),
+    imgcount INTEGER NOT NULL
+);
 
 
 CREATE TABLE IF NOT EXISTS styles (
@@ -30,7 +37,7 @@ CREATE TABLE IF NOT EXISTS paths (
     id SERIAL UNIQUE PRIMARY KEY NOT NULL,
     style_id SERIAL NOT NULL references styles(id),
     path ltree not null,
-    constraint path_unique UNIQUE (path) deferrable initially immediate
+    CONSTRAINT path_unique UNIQUE (path) DEFERRABLE INITIALLY IMMEDIATE
 );
 
 
@@ -85,7 +92,7 @@ BEGIN
         select distinct style_id, fp.path || subpath(paths.path, index(paths.path, text2ltree(child)))
         from paths,
              (select paths.path from paths where paths.path ~ CAST('*.' || parent AS lquery)) as fp
-        where path.path ~ CAST('*.' || child || '.*' AS lquery)
+        where paths.path ~ CAST('*.' || child || '.*' AS lquery)
     );
     -- Cleanup: old paths that start with the child (that where used above in the cartesian product)
     -- have became a subset of the result of the cartesian product, thus being redundant.
@@ -139,7 +146,7 @@ BEGIN
     FROM paths
     WHERE id IN (SELECT id
                  FROM (SELECT id, ROW_NUMBER() OVER (partition BY style_id, path) AS rnum
-                       FROM path) t
+                       FROM paths) t
                  WHERE t.rnum > 1);
 
     -- re-activate uniqueness check and perform check
