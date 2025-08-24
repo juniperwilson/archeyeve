@@ -17,6 +17,7 @@ func main() {
 	defer database.Stop()
 
 	SeedAll()
+
 	router := api.ApiRouting()
 	router.Run(":8080")
 }
