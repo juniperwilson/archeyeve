@@ -2,12 +2,16 @@ package main
 
 import (
 	_ "embed"
-	"github.com/juniperwilson/archeyeve/internal/database"
 	"strings"
+	
+	"github.com/juniperwilson/archeyeve/internal/database"
+	"slices"
 )
 
 //go:embed styles.txt
 var Styles string
+
+var loneStyles = []string{"megalithic", "roman"}
 
 func SeedAll() {
 	seedStyles()
@@ -15,45 +19,38 @@ func SeedAll() {
 }
 
 func seedStyles() {
+	styles := strings.Split(Styles, "\n")
 	s := [][]string{}
-	styles := strings.SplitAfter(Styles, "\n")
-	for i, v := range styles {
+	for _, v := range styles {
 		if v != "" {
-			s[i] = strings.SplitAfter(v, " --> ")
+			s = append(s, strings.Split(v, " --> "))
 		}
 	}
-	flatS := []string{""}
+	flatS := []string{}
+
 	for _, v := range s {
-		if !in(flatS, v[0]) {
+		if !slices.Contains(flatS, v[0]) {
 			flatS = append(flatS, v[0])
 		}
-        if !in(flatS, v[1]) {
+		if !slices.Contains(flatS, v[1]) {
 			flatS = append(flatS, v[1])
 		}
 	}
-    for _, v := range flatS {
-        database.AddStyle(v)
-    }
 
-    seedEdges(s, flatS)
-}
-
-func seedEdges(s [][]string, flatS[]string) {
-    for _, v := range s {
-        _, index1 := in(flatS, v[0])
-        _, index2 := in(flatS, v[1])
-        
-        database.AddEdge(index1, index2)
-    }
-}
-
-func in(xs []string, x string) (bool, int) {
-	for i, v := range xs {
-		if x == v {
-			return true, i
-		}
+	for _, v := range flatS {
+		database.AddStyle(strings.ToLower(v))
 	}
-	return false, 0
+
+	seedEdges(s, flatS)
+}
+
+func seedEdges(s [][]string, flatS []string) {
+	for _, v := range s {
+		index1 := slices.Index(flatS, v[0])
+		index2 := slices.Index(flatS, v[1])
+
+		database.AddEdge(index1+1, index2+1)
+	}
 }
 
 func seedObservations() {

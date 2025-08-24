@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS observations (
     name VARCHAR(100) NOT NULL,
     lng NUMERIC(9,6) NOT NULL,
     lat NUMERIC(9,6) NOT NULL,
-    style_ids VARCHAR(100)[3],
+    styles VARCHAR(100)[3],
     year NUMERIC(4),
     imgcount INTEGER NOT NULL
 );

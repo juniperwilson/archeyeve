@@ -63,17 +63,14 @@ func config() *pgxpool.Config {
 	dbConfig.ConnConfig.ConnectTimeout = defaultConnectTimeout
 
 	dbConfig.BeforeAcquire = func(ctx context.Context, c *pgx.Conn) bool {
-		fmt.Println("Before acquiring the connection pool to the database!!")
 		return true
 	}
 
 	dbConfig.AfterRelease = func(c *pgx.Conn) bool {
-		fmt.Println("After releasing the connection pool to the database!!")
 		return true
 	}
 
 	dbConfig.BeforeClose = func(c *pgx.Conn) {
-		fmt.Println("Closed the connection pool to the database!!")
 	}
 
 	return dbConfig

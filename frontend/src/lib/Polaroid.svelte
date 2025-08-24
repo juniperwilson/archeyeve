@@ -9,16 +9,15 @@
         observation: Observation
     } = $props()
 
-    // let styles = observation.style.toString()
-    let styles = "no styles found"
-    let src = `${FILE_PATH}${observation.id}/1.jpeg`
-    let alt = styles
+    let oStyles = observation.styles.toString()
+    // let src = `${FILE_PATH}${observation.id}/1.jpeg`
+    let alt = oStyles
 
 </script>
 
 <div class="gridcontainer">
     <div class="photo">
-        <img {src} {alt}/>
+        <img {alt}/>
         <!-- <p>{observation.imgcount}</p> -->
     </div>
     <div class="description">
@@ -26,9 +25,9 @@
         <h1>{observation.name}</h1>
 
         {#if !observation.year}
-            <h2>{styles}</h2>
+            <h2>{oStyles}</h2>
         {:else}
-            <h2>{styles}, {observation.year}</h2>
+            <h2>{oStyles}, {observation.year}</h2>
         {/if}
     </div>
 </div>
@@ -40,6 +39,9 @@
         grid-template-rows: 79fr 21fr;
         aspect-ratio: 610 / 510;
         max-width: 20vw;
+        min-width: 20vw;
+        height: auto;
+        display: block;
         max-height: 100%;
         background: #ffffff;
         border: 1px solid black;
@@ -48,6 +50,7 @@
 
     .description {
         max-height: 100%;
+        height: 100%;
         /* max-width: 100%; */
     }
 
@@ -75,7 +78,8 @@
     }
 
     .photo {
-        max-height: 100%;
+        max-height: 79%;
+        height: 100%;
     }
 
     img {

@@ -43,9 +43,9 @@ func DeleteEdge(parent, child int) {
 
 func FindStyle(name string) Style {
 	var id int
-	sb := sqlbuilder.PostgreSQL.NewSelectBuilder()
+	sb := sqlbuilder.NewSelectBuilder()
 	sb.Select("id").From("styles").Where(sb.EQ("name", name))
-	sql, args := sb.Build()
+	sql, args := sb.BuildWithFlavor(sqlbuilder.PostgreSQL)
 
 	err := dbpool.QueryRow(context.Background(), sql, args...).Scan(&id)
 	if err != nil {

@@ -7,7 +7,7 @@ export type Observation = {
     name: string
     lng: number
     lat: number
-    style: string[]
+    styles: string[]
     year: number
     imgcount: number
 }

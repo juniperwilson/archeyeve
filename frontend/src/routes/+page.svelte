@@ -12,7 +12,7 @@
     let observations = $state(data.observations)
 
     async function styleSearch(style: string, focus: boolean) {
-        if (focus) {
+        if (!focus) {
             observations = await doSearch({style: style})
             console.log("started style search")
         } else {

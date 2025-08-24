@@ -74,12 +74,19 @@ func styleSearch(sb *sqlbuilder.SelectBuilder, s *Search) string {
 	cond := sqlbuilder.NewCond()
 	whereClause.SetFlavor(sqlbuilder.PostgreSQL)
 
-	subquery := fmt.Sprintf("SELECT style_id FROM paths WHERE path ~ '%s'", fmt.Sprintf("*.%d.*", sty.ID))
+	//returns list of ids in style lineage
+	// subquery := fmt.Sprintf("SELECT style_id FROM paths WHERE path ~ '%s'", fmt.Sprintf("*.%d.*", sty.ID))
+	subquery := fmt.Sprintf("SELECT name FROM styles JOIN paths ON styles.id = paths.style_id WHERE path ~ '%s'", fmt.Sprintf("*.%d.*", sty.ID))
 
 	// Set the flavor of the WhereClause to PostgreSQL.
 	whereClause.SetFlavor(sqlbuilder.PostgreSQL)
-	whereClause.AddWhereExpr(cond.Args, cond.Or(cond.In("style_ids[0]", sqlbuilder.Raw(subquery)), cond.In("style_ids[1]", sqlbuilder.Raw(subquery)), cond.In("style_ids[2]", sqlbuilder.Raw(subquery))))
+	whereClause.AddWhereExpr(cond.Args, cond.Or(cond.In("styles[0]", sqlbuilder.Raw(subquery)), cond.In("styles[1]", sqlbuilder.Raw(subquery)), cond.In("styles[2]", sqlbuilder.Raw(subquery))))
 	sb.AddWhereClause(whereClause)
+
+	// a := "we want observations where there is at least 1 overlap between style lineage of search and styles of observation"
+	// q := "SELECT * FROM observations
+	// 		WHERE EXISTS (SELECT style FROM
+	// 		)"
 
 	return ""
 }
