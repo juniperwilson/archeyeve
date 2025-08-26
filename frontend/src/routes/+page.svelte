@@ -2,32 +2,30 @@
     import GridView from "$lib/GridView.svelte";
 	import Menu from "$lib/Menu.svelte";
 	import SearchTab from "$lib/SearchTab.svelte";
-    import { doSearch } from "$lib/api";
-	import StylesBar from "$lib/StylesBar.svelte";
+    import { doSearch, type Search } from "$lib/api";
+	import StylesBar from "$lib/SelectableButtonsBar.svelte";
 	import type { PageData } from "./$types";
+	import { selectedButton } from "$lib/shared.svelte";
 
-    const styles = ["manueline", "mudejar", "romanesque", "brutalism", "neo-mudejar", "neo-romanesque", "castro", "português suave"]
-    // const stylesOLD = ['manueline', 'mudejar', 'gothic', 'baroque', 'romanesque', 'mannerist', 'military', 'neoclassical', 'roman', 'industrial', 'castro', 'renaissance', 'rococo', 'pombaline', 'art deco', 'modern', 'megalithic'];
+    const titles = ["manueline", "mudejar", "romanesque", "brutalism", "neo-mudejar", "neo-romanesque", "castro", "português suave"]
     let { data }: { data: PageData } = $props();
     let observations = $state(data.observations)
 
-    async function styleSearch(style: string, focus: boolean) {
-        if (!focus) {
-            observations = await doSearch({style: style})
-            console.log("started style search")
-        } else {
-            observations = await doSearch({})
-            // console.log("unselected")
-        }
+    async function styleSearch(style: string) {
+        observations = await doSearch({style: style})
+    }
+
+    async function advSearch(s: Search) {
+        observations = await doSearch(s)
     }
 </script>
 
 <div class="pagecontainer">
         <Menu />
-        <StylesBar {styles} {styleSearch}/>
+        <StylesBar selected={selectedButton} {titles} onclick={styleSearch} />
     <div class="content"> 
         <GridView {observations} />
-        <SearchTab />
+        <SearchTab search={advSearch}/>
     </div>
 </div>
 
@@ -41,7 +39,7 @@
 
     .content {
         display: grid;
-        grid-template-columns: 8fr 2fr ;
+        grid-template-columns: 75fr 25fr ;
         grid-template-rows: 1fr;
         gap: 10px;
         height: 100%;

@@ -1,17 +1,17 @@
-<script>
+<script lang="ts">
     import '@fontsource/roboto'
-	
-	let buttonProps = {
-	class:[$$restProps.class]
-	}
+    	
+	let { 
+        text,
+        onclick,
+        isSelected
+    } = $props()
 </script>
-	<button on:click
-			on:mouseover
-			on:mouseenter
-			on:mouseleave
-		{...buttonProps}>
-			<slot/>
-	</button>
+    {#if isSelected}
+	<button class="selected" {onclick}>{text}</button>
+    {:else}
+    <button {onclick}>{text}</button>
+    {/if}
 
 <style>
 	button {
@@ -24,22 +24,26 @@
         font-weight: bold;
         text-wrap: nowrap;
 	}
-
-    .selected {
-        background-color: #231942;
+    button.selected {
+        font-size:1em;
+        height: 100%;
+        border-radius: 0px;
+        border: 1px solid black;
         background-color: #6dae47;
         color: white;
+        font-family: "Roboto";
+        font-weight: bold;
+        text-wrap: nowrap;
     }
-
     button:hover {
         /* text-shadow: 1px 1px 1px grey; */
         background-color: #8bb174;
     }
-
-    /* button:focus {
-        background-color: #231942;
+    
+    button:active {
         background-color: #6dae47;
         color: white;
-    } */
-    
+    }
+
+
 </style>

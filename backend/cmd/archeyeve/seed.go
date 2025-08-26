@@ -2,10 +2,13 @@ package main
 
 import (
 	_ "embed"
+	"fmt"
 	"strings"
-	
-	"github.com/juniperwilson/archeyeve/internal/database"
+
 	"slices"
+
+	"github.com/juniperwilson/archeyeve/external/api"
+	"github.com/juniperwilson/archeyeve/internal/database"
 )
 
 //go:embed styles.txt
@@ -61,6 +64,7 @@ func seedObservations() {
 		Name:     "Praça de Touros do Campo Pequeno",
 		Lng:      -9.145202,
 		Lat:      38.742590,
+		Usage:
 		Styles:   []string{"neo-mudejar"},
 		Year:     1892,
 		ImgCount: 1,
@@ -139,6 +143,10 @@ func seedObservations() {
 	}}
 
 	for _, v := range obs {
-		database.AddObservation(&v)
+		err := api.SeedObservation(&v)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
 	}
 }

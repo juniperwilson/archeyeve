@@ -1,97 +1,93 @@
-import type { Observation } from "$lib";
-
-export async function fetchObservation(id: number): Promise<Observation> {
-    return {
-        id: id,
-        userid: 0,
-        name: 'Igreja de São João Baptista',
-        lng: 0.0,
-        lat: 0.0,
-        style: ["Manueline", "Baroque"],
-        year: 2025,
-        imgcount: 1
-    }
-}
+import type { Observation, Style } from "$lib";
 
 const observations: Observation[] = [{
     id: 0,
     userid: 0,
     name: "Praça de Touros do Campo Pequeno",
+    address: "",
     lng: -9.145202,
     lat: 38.742590,
-    style: ["neo-mudejar"],
+    styles: ["neo-mudejar"],
     year: 1892,
     imgcount: 1 
 }, {
     id: 1,
     userid: 0,
     name: "Torre do Tombo",
+    address: "",
     lng: -9.156460,
     lat: 38.754630,
-    style: ["post-modernism","brutalism"],
+    styles: ["post-modernism","brutalism"],
     year: 1990,
     imgcount: 1
 }, {
     id: 2,
     userid: 0,
     name: "Torre da Praça do Areeiro",
+    address: "",
     lng: -9.133270,
     lat: 38.742910,
-    style: ["português suave"],
+    styles: ["português suave"],
     year: 1938,
     imgcount: 1
 }, {
     id: 3,
     userid: 0,
     name: "St George's Church",
+    address: "",
     lng: -9.160482,
     lat: 38.716496,
-    style: ["neo-romanesque"],
+    styles: ["neo-romanesque"],
     year: 1889,
     imgcount: 1 
 }, {
     id: 4,
     userid: 0,
     name: "EDP Sede II",
+    address: "",
     lng: -9.148990,
     lat: 38.707162,
-    style: ["brutalism"],
+    styles: ["brutalism"],
     year: 2024,
     imgcount: 1 
 }, {
     id: 5,
     userid: 0,
     name: "Igreja de São João Baptista",
+    address: "",
     lng: -8.414697,
     lat: 39.603648,
-    style: ["manueline"],
+    styles: ["manueline"],
     year: 1500,
     imgcount: 1
 }, {
     id: 6,
     userid: 0,
     name: "Sé de Braga",
+    address: "",
     lng: -8.427396,
     lat: 41.549916,
-    style: ["romanesque", "manueline", "baroque"],
+    styles: ["romanesque", "manueline", "baroque"],
     year: 1089,
     imgcount: 1
 }, {
     id: 7,
     userid: 0,
     name: "Santuário do Monte de Santa Luzia",
+    address: "",
     lng: -8.835104,
     lat: 41.701517,
-    style: ["neo-byzantine", "neo-romanesque", "neo-gothic"],
+    styles: ["neo-byzantine", "neo-romanesque", "neo-gothic"],
     year: 1904,
     imgcount: 1
 }, {
     id: 8,
     userid: 0,
     name: "Citânia de Briteiros",
+    address: "",
     lng: -8.315402,
     lat: 41.527687,
-    style: ["castro", "iron-age"],
+    styles: ["castro", "iron-age"],
     year: -200,
     imgcount: 1
 }]
@@ -115,6 +111,10 @@ export type AreaSearch = {
     lng2: number
 }
 
+export type ObservationID = {
+    id: string
+}
+
 export type Search = Partial<BaseSearch & (CircleSearch | AreaSearch)>
 
 export async function doSearch(s: Search): Promise<Observation[]> {
@@ -126,18 +126,25 @@ export async function doSearch(s: Search): Promise<Observation[]> {
     const url = "http://localhost:8080/search?" + searchParams.toString()
     let response = await fetch(url)
 
-    // response.headers.append('Access-Control-Allow-Origin', "http://localhost:5173/")
+    return response.json()
+}
+
+export async function getObservation(id: number): Promise<Observation> {
+
+    let s: ObservationID = {id: id.toString()}
+    let searchparams = new URLSearchParams(s as Record<string, string>)
+    const url = "http://localhost:8080/observation?" + searchparams
+    let response = await fetch(url)
 
     return response.json()
 }
 
-export async function doSearchFAKE(s: Search): Promise<Observation[]> {
-    let result: Observation[] = []
-    observations.forEach((o) => {
-        if (s.style == o.style[0] || s.style == o.style[1] || s.style == o.style[2])
-        result.push(o)
-    })
+export async function fetchStyle(name: string): Promise<Style> {
+    // let s: Style = {name: name}
+    // let searchparams = new URLSearchParams(s as Record<string, string>)
+    const url = "http://localhost:8080/style?name=" + name
+    let response = await fetch(url)
 
-    return result
+    return response.json()
 }
 

@@ -33,7 +33,10 @@ func Find(s *Search) ([]*Observation, error) {
 	sb := sqlbuilder.NewSelectBuilder()
 	sb.Select(`*`).From(`observations`)
 
-	style := styleSearch(sb, s)
+	style, err := styleSearch(sb, s)
+	if err != nil {
+		return nil, err
+	}
 	era := temporalSearch(sb, s)
 	region := spatialSearch(sb, s)
 
@@ -55,19 +58,21 @@ func Find(s *Search) ([]*Observation, error) {
 
 	return pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Observation, error) {
 		var o Observation
-		err := row.Scan(&o.ID, &o.UserID, &o.Name, &o.Lng, &o.Lat, &o.Styles, &o.Year, &o.ImgCount)
-		fmt.Println(o)
+		err := row.Scan(&o.ID, &o.UserID, &o.Name, &o.Address, &o.Lng, &o.Lat, &o.Styles, &o.Year, &o.ImgCount)
 		return &o, err
 	})
 }
 
-func styleSearch(sb *sqlbuilder.SelectBuilder, s *Search) string {
+func styleSearch(sb *sqlbuilder.SelectBuilder, s *Search) (string, error) {
 	//Style search
 	if s.Style == "" {
-		return "any"
+		return "any", nil
 	}
 
-	var sty Style = FindStyle(s.Style)
+	sty, err := FindStyle(s.Style)
+	if err != nil {
+		return "", err
+	}
 	fmt.Println(sty)
 
 	whereClause := sqlbuilder.NewWhereClause()
@@ -88,7 +93,7 @@ func styleSearch(sb *sqlbuilder.SelectBuilder, s *Search) string {
 	// 		WHERE EXISTS (SELECT style FROM
 	// 		)"
 
-	return ""
+	return "", nil
 }
 
 func spatialSearch(sb *sqlbuilder.SelectBuilder, s *Search) string {
@@ -111,14 +116,7 @@ func spatialSearch(sb *sqlbuilder.SelectBuilder, s *Search) string {
 		)
 		sb.AddWhereClause(whereClause)
 	} else if s.Lat1 != 0 && s.Lng1 != 0 && s.Lat2 == 0 && s.Lng2 == 0 && s.Radius != 0 {
-		//Round search
-		floatCoords := [3]float64{s.Lat1, s.Lng1, s.Radius}
-		cds := [3]string{}
-		for i, v := range floatCoords {
-			cds[i] = strconv.FormatFloat(v, 'f', -1, 64)
-		}
-		region := fmt.Sprintf("AND (((o.lng-%s)^2 + (o.lat-%s)^2) <= %s^2)", cds[0], cds[1], cds[2])
-		sb.SQL(region)
+		radialSearch(sb, s.Lat1, s.Lng1, s.Radius)
 	}
 
 	return ""
@@ -152,3 +150,18 @@ type ErrBadSearch struct {
 func (e ErrBadSearch) Error() string {
 	return e.Message + ": " + strings.Join(e.Details, ", ")
 }
+
+func radialSearch(sb *sqlbuilder.SelectBuilder, lat, lng, radius float64) {
+	floatCoords := [3]float64{lng, lat, radius}
+	cds := [3]string{}
+	for i, v := range floatCoords {
+		cds[i] = strconv.FormatFloat(v, 'f', -1, 64)
+	}
+
+	region := fmt.Sprintf("(((o.lng-%s)^2 + (o.lat-%s)^2) <= %s^2)", cds[0], cds[1], cds[2])
+	// sqlbuilder.Raw(region)
+
+	sb.And(region)
+}
+
+

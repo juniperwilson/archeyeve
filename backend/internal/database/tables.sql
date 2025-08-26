@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS observations (
     id SERIAL UNIQUE PRIMARY KEY NOT NULL,
     userid INTEGER NOT NULL,
     name VARCHAR(100) NOT NULL,
+    address VARCHAR(300) NOT NULL,
     lng NUMERIC(9,6) NOT NULL,
     lat NUMERIC(9,6) NOT NULL,
     styles VARCHAR(100)[3],

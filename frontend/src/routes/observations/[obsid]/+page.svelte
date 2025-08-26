@@ -1,15 +1,16 @@
 <script lang="ts">
-	import type { Style } from "$lib";
+	import type { Observation } from "$lib";
 	import Menu from "$lib/Menu.svelte";
-	import type { PageData } from "../[stylename]/$types";
+	import Polaroid from "$lib/Polaroid.svelte";
+	import type { PageData } from "../[obsid]/$types";
 
     let { data }: { data: PageData } = $props();
-    let style = $state(data.style)
+    let observation = $state(data.observation)
 </script>
 
 <div class="pagecontainer">
         <Menu />
-        <p>{style.name}</p>
+        <Polaroid {observation} />
 </div>
 
 <style>

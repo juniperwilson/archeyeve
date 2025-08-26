@@ -1,14 +1,17 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/juniperwilson/archeyeve/internal/database"
+	"googlemaps.github.io/maps"
 )
 
 func createObservations(c *gin.Context) {
@@ -114,15 +117,11 @@ func search(c *gin.Context) {
 
 	errs = []string{}
 
-	fmt.Println(search)
-
 	obs, err := database.Find(&search)
 	if err != nil {
 		fmt.Println(err.Error())
 		errs = append(errs, "internal error")
 	}
-
-	fmt.Println(obs)
 
 	if len(errs) != 0 {
 		c.Error(apiError{errs})
@@ -132,12 +131,91 @@ func search(c *gin.Context) {
 	c.JSON(http.StatusOK, obs)
 }
 
+func getObservation(c *gin.Context) {
+
+	idString := c.Query("id")
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		fmt.Println(err)
+		c.Error(apiError{messages: []string{"id invalid"}})
+	}
+	obs, err := database.GetObservation(id)
+	if err != nil {
+		fmt.Println(err)
+		c.Error(apiError{messages: []string{"observation not found"}})
+	}
+
+	c.JSON(http.StatusOK, obs)
+}
+
+func getStyle(c *gin.Context) {
+	name := c.Query("name")
+
+	style, err := database.FindStyle(name)
+	if err != nil {
+		c.Error(apiError{messages: []string{"style not found"}})
+	}
+
+	c.JSON(http.StatusOK, style)
+}
+
 func ApiRouting() *gin.Engine {
 	router := gin.Default()
 	router.Use(cors.Default())
 
 	router.GET("/search", search)
+	router.GET("/observation", getObservation)
 	router.POST("/observation", createObservations)
+	router.GET("/style", getStyle)
 
 	return router
+}
+
+func FindAddress(lat, lng float64) (string, error) {
+	errs := []string{}
+
+	client, err := maps.NewClient(maps.WithAPIKey(os.Getenv("GOOGLEAPI")))
+	if err != nil {
+		errs = append(errs, err.Error())
+	}
+
+	request := &maps.GeocodingRequest{
+		LatLng: &maps.LatLng{Lat: lat, Lng: lng},
+	}
+
+	result, err := client.ReverseGeocode(context.Background(), request)
+	if err != nil {
+		errs = append(errs, err.Error())
+	}
+
+	if len(errs) != 0 {
+		return "", apiError{errs}
+	}
+
+	address := result[0].FormattedAddress
+
+	return address, nil
+}
+
+func SeedObservation(obs *database.Observation) error {
+	errs := []string{}
+
+	address, err := FindAddress(obs.Lat, obs.Lng)
+	if err != nil {
+		errs = append(errs, err.Error())
+	}
+
+	obs.Address = address
+
+	_, err = database.AddObservation(obs)
+	if err != nil {
+		errs = append(errs, err.Error())
+	}
+
+	if len(errs) != 0 {
+		return apiError{errs}
+	}
+
+	return nil
+
 }
