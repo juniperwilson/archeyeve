@@ -16,7 +16,7 @@
 
 <div class="container">
     {#each titles as title }
-        <Button isSquare={false} isSelected={selected.name == title? true : false } text={title.toUpperCase()} onclick={() => clickbutton(title)}></Button>
+        <Button isSquare={true} isSelected={selected.name == title? true : false } text={title.toUpperCase()} onclick={() => clickbutton(title)}></Button>
     {/each}
 </div>
     
@@ -24,10 +24,9 @@
     .container {
         display: flex;
         flex-direction: row;
-        /* width: 100%; */
-        max-height: 100%;
+        flex-wrap: wrap;
         gap: 5px;
-        overflow-x: auto;
+        width: 62vw;
     }
     
 </style>

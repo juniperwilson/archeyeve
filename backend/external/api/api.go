@@ -27,6 +27,10 @@ func createObservations(c *gin.Context) {
 		errs = append(errs, "must have a name")
 	}
 
+	if obs.Type == nil {
+		errs = append(errs, "must have a type")
+	}
+
 	if obs.Lng == 0.0 && obs.Lat == 0.0 {
 		errs = append(errs, "invalid location")
 	}

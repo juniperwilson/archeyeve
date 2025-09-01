@@ -58,7 +58,7 @@ func Find(s *Search) ([]*Observation, error) {
 
 	return pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Observation, error) {
 		var o Observation
-		err := row.Scan(&o.ID, &o.UserID, &o.Name, &o.Address, &o.Lng, &o.Lat, &o.Styles, &o.Year, &o.ImgCount)
+		err := row.Scan(&o.ID, &o.UserID, &o.Name, &o.Address, &o.Styles, &o.Type, &o.Condition, &o.Lng, &o.Lat, &o.Year, &o.ImgCount)
 		return &o, err
 	})
 }

@@ -6,6 +6,8 @@
 	import StylesBar from "$lib/SelectableButtonsBar.svelte";
 	import type { PageData } from "./$types";
 	import { selectedButton } from "$lib/shared.svelte";
+	import Polaroid from "$lib/Polaroid.svelte";
+	import type { Observation } from "$lib";
 
     const titles = ["manueline", "mudejar", "romanesque", "brutalism", "neo-mudejar", "neo-romanesque", "castro", "português suave"]
     let { data }: { data: PageData } = $props();
@@ -24,7 +26,7 @@
         <Menu />
         <StylesBar selected={selectedButton} {titles} onclick={styleSearch} />
     <div class="content"> 
-        <GridView {observations} />
+        <GridView small={true} {observations} />
         <SearchTab search={advSearch}/>
     </div>
 </div>
@@ -38,9 +40,12 @@
     }
 
     .content {
-        display: grid;
+        /* display: grid;
         grid-template-columns: 75fr 25fr ;
-        grid-template-rows: 1fr;
+        grid-template-rows: 1fr; */
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
         gap: 10px;
         height: 100%;
     }

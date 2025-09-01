@@ -185,12 +185,12 @@
 		border-width: 10%;
 		border-style: solid;
 		height: 100%;
-		max-width: 100%;
+		max-width: 30vw;
 		border: 1px solid black;
 		text-align: center;
 		color: white;
 		font-family: 'Roboto';
-		padding: 5%;
+		padding: 20px;
 	}
 
 	form {

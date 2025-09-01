@@ -27,21 +27,6 @@
 		<a data-sveltekit-preload-data="tap" href="/observations/{observation.id}">
 			<h1>{observation.name}</h1>
 		</a>
-
-		{#if !observation.year}
-			<h2>
-				{#each observation.styles as style}
-					<a data-sveltekit-preload-data="tap" href="/styles/{style}">{style}</a>
-				{/each}
-			</h2>
-		{:else}
-			<h2>
-				{#each observation.styles as style}
-					<a data-sveltekit-preload-data="tap" href="/styles/{style}"> {style},</a>
-				{/each}
-				{observation.year}
-			</h2>
-		{/if}
 	</div>
 </div>
 
@@ -49,9 +34,9 @@
 	.gridcontainer {
 		display: grid;
 		grid-template-rows: 79fr 21fr;
-		aspect-ratio: 1 / 1;
-		max-width: 20vw;
-		min-width: 20vw;
+		aspect-ratio: 610 / 510;
+		max-width: 15vw;
+		min-width: 15vw;
 		height: auto;
 		display: block;
 		max-height: 100%;
@@ -80,22 +65,10 @@
 	h1 {
 		margin: 0%;
 		margin-top: 2%;
-
-		font-size: 1.4em;
+		font-size: 1.1em;
 		line-height: 1;
 		/* word-break: break-all; */
 		hyphens: auto;
 		overflow: hidden;
-	}
-
-	h2 {
-		margin: 0%;
-		margin-top: 2%;
-		font-size: 1em;
-		line-height: 1;
-		/* word-break: break-all; */
-		hyphens: auto;
-		overflow: hidden;
-		font-family: 'Roboto';
 	}
 </style>
