@@ -47,8 +47,6 @@ export async function getObservation(id: number): Promise<Observation> {
     return response.json()
 }
 
-
-
 export async function fetchStyle(name: string): Promise<Style> {
     const url = "http://localhost:8080/style?name=" + name
     let response = await fetch(url)
@@ -58,5 +56,12 @@ export async function fetchStyle(name: string): Promise<Style> {
 
 export async function getBuildings(): Promise<Observation[]> {
     return doSearch({})
+}
+
+export async function getStyles(): Promise<Style[]> {
+    const url = "http://localhost:8080/style?"
+    let response = await fetch(url)
+
+    return response.json()
 }
 

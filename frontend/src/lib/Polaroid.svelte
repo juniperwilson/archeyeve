@@ -1,43 +1,40 @@
 <script lang="ts">
-	import { FILE_PATH, type Observation, Style} from '.';
+	import type { Snippet } from 'svelte';
+	import { FILE_PATH } from '.';
 	import '@fontsource/roboto';
 
 	let {
-        data,
+        photo,
+        description,
         tall = true,
         big = false,
         mini = false
 	} : {
-        data: Observation | Style,
-        tall: boolean,
-        big: boolean,
-        mini: boolean
-    }= $props();
-
-    let src = FILE_PATH
+        photo: Snippet
+        description: Snippet
+        tall?: boolean,
+        big?: boolean,
+        mini?: boolean
+    } = $props();
 
     let height = tall ? "tall" : "short"
     let size = mini ? "mini": (big ? "big": "normal")
-
-    let name = observation ? observation.name : (style ? style.name : "")
-    let info = style ? style.era : ( observation ? observation.name : "")
 </script>
 
-<div class={["container", {size}, {height}]}>
+{console.log(height)}
+{console.log(size)}
+
+<div class="polaroid {size} {height}">
 	<div class="photo">
-		<a data-sveltekit-preload-data="tap" href="/observations/{observation.id}">
-			<img {src} />
-		</a>
+		{@render photo()}
 	</div>
 	<div class="description">
-		<a data-sveltekit-preload-data="tap" href="/observations/{observation.id}">
-			{@render description()}
-		</a>
+		{@render description()}
 	</div>
 </div>
 
 <style>
-    .container {
+    .polaroid {
         display: grid;
         border: 1px solid black;
 		padding: 2%;
@@ -80,7 +77,7 @@
         max-height: 12vw;
     }
 
-    img .tall {
+    :global(.polaroid img.tall) {
 		width: 100%;
 		aspect-ratio: 1;
 		object-fit: cover;
@@ -94,25 +91,31 @@
     .description {
 		max-height: 100%;
 		height: 100%;
-		/* max-width: 100%; */
 	}
 
-    .big h1 {
+    :global(.polaroid.tall h1) {
+		font-size: 1.4em;
+	}
+
+    :global(.polaroid.short.normal h1) {
+		font-size: 1.1em;
+	}
+
+    :global(.polaroid.big h1) {
 		font-size: 2em;
 	}
 
-	h2 {
+	:global(.polaroid.normal h2) {
 		margin: 0%;
 		margin-top: 2%;
 		font-size: 1em;
 		line-height: 1;
-		/* word-break: break-all; */
 		hyphens: auto;
 		overflow: hidden;
 		font-family: 'Roboto';
 	}
 
-	.big h2 {
+	:global(.polaroid.big h2) {
 		font-size: 1.4em;
-	}
+	} 
 </style>

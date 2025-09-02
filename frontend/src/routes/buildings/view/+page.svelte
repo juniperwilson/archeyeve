@@ -1,24 +1,30 @@
 <script lang="ts">
-	import type { Observation } from "$lib";
 	import { doSearch, type Search } from "$lib/api";
+	import BuildingPolaroid from "$lib/BuildingPolaroid.svelte";
 	import GridView from "$lib/GridView.svelte";
 	import Menu from "$lib/Menu.svelte";
 	import SearchTab from "$lib/SearchTab.svelte";
     import type { PageData } from "../view/$types";
 
     let { data }: { data: PageData } = $props();
-    let observations = data.observations
+    let buildings = $state(data.buildings)
 
     async function advSearch(s: Search) {
-        observations = await doSearch(s)
+        buildings = await doSearch(s)
     }
 </script>
+
+{#snippet polaroids()}
+    {#each buildings as building}
+        <BuildingPolaroid {building}/>
+    {/each}
+{/snippet}
 
 <div class="pagecontainer">
         <Menu />
         <div class="content"> 
-            <GridView tall={true} {observations} />
-            <SearchTab search={advSearch}/>
+            <GridView {polaroids} />
+            <SearchTab search={advSearch} />
         </div>
 </div>
 

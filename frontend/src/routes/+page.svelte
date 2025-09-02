@@ -8,6 +8,7 @@
 	import { selectedButton } from "$lib/shared.svelte";
 	import Polaroid from "$lib/Polaroid.svelte";
 	import type { Observation } from "$lib";
+	import ObservationPolaroid from "$lib/ObservationPolaroid.svelte";
 
     const titles = ["manueline", "mudejar", "romanesque", "brutalism", "neo-mudejar", "neo-romanesque", "castro", "português suave"]
     let { data }: { data: PageData } = $props();
@@ -22,11 +23,17 @@
     }
 </script>
 
+{#snippet polaroids()}
+    {#each observations as observation}
+        <ObservationPolaroid {observation}/>
+    {/each}
+{/snippet}
+
 <div class="pagecontainer">
         <Menu />
         <StylesBar selected={selectedButton} {titles} onclick={styleSearch} />
     <div class="content"> 
-        <GridView tall={false} {observations} />
+        <GridView {polaroids} />
         <SearchTab search={advSearch}/>
     </div>
 </div>

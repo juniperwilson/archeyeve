@@ -1,20 +1,24 @@
 <script lang="ts">
-	import type { Observation } from "$lib";
-	import { doSearch, type Search } from "$lib/api";
 	import GridView from "$lib/GridView.svelte";
 	import Menu from "$lib/Menu.svelte";
-	import SearchTab from "$lib/SearchTab.svelte";
+	import StylePolaroid from "$lib/StylePolaroid.svelte";
     import type { PageData } from "../view/$types";
 
     let { data }: { data: PageData } = $props();
-    let observations = data.observations
+    let styles = data.styles
 
 </script>
+
+{#snippet polaroids()}
+    {#each styles as style}
+        <StylePolaroid {style}/>
+    {/each}
+{/snippet}
 
 <div class="pagecontainer">
         <Menu />
         <div class="content"> 
-            <GridView tall={true} {observations} />
+            <GridView {polaroids} />
         </div>
 </div>
 

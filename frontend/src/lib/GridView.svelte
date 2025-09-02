@@ -1,14 +1,11 @@
 <script lang="ts">
-	import Polaroid from './Polaroid.svelte';
-	import type { Observation } from '$lib';
+	import type { Snippet } from 'svelte';
 
-	let { observations, tall}  = $props();
+	let { polaroids } : { polaroids: Snippet }= $props();
 </script>
 
 <div class="container">
-	{#each observations as o}
-			<Polaroid data={o} {tall} />
-	{/each}
+	{@render polaroids()}
 </div>
 
 <style>
