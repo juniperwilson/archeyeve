@@ -1,30 +1,24 @@
 <script lang="ts">
-	import Polaroid from "./Polaroid.svelte";
-    import type { Observation } from "$lib";
-	import SmallPolaroid from "./SmallPolaroid.svelte";
+	import Polaroid from './Polaroid.svelte';
+	import type { Observation } from '$lib';
 
-    let { observations, small }: { observations: Observation[], small: boolean } = $props();
+	let { observations, tall}  = $props();
 </script>
 
 <div class="container">
-
-    {#each observations as o} 
-    {#if !small}
-    <Polaroid observation={o}/>
-    {:else}
-    <SmallPolaroid observation={o}/>
-    {/if}
-    {/each}  
+	{#each observations as o}
+			<Polaroid data={o} {tall} />
+	{/each}
 </div>
 
 <style>
-    .container {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-        gap: 20px;
-        max-height: 100%;
-        padding-right: 10px;
-    }
+	.container {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 20px;
+		max-height: 100%;
+		padding-right: 10px;
+	}
 </style>

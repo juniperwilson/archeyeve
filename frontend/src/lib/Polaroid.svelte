@@ -1,91 +1,104 @@
 <script lang="ts">
-	import { FILE_PATH, type Observation } from '.';
+	import { FILE_PATH, type Observation, Style} from '.';
 	import '@fontsource/roboto';
 
 	let {
-		observation
-	}: {
-		observation: Observation;
-	} = $props();
+        data,
+        tall = true,
+        big = false,
+        mini = false
+	} : {
+        data: Observation | Style,
+        tall: boolean,
+        big: boolean,
+        mini: boolean
+    }= $props();
 
-	$inspect(observation)
+    let src = FILE_PATH
 
-	let src = "/static/0/1.jpeg"
-	let alt = 'An observation of a ' + observation.condition + ' ' + observation.type + 
-		' building in the  ' + observation.styles[0] + 
-		' style found at ' + observation.address +'.';
+    let height = tall ? "tall" : "short"
+    let size = mini ? "mini": (big ? "big": "normal")
+
+    let name = observation ? observation.name : (style ? style.name : "")
+    let info = style ? style.era : ( observation ? observation.name : "")
 </script>
 
-<div class="gridcontainer">
+<div class={["container", {size}, {height}]}>
 	<div class="photo">
 		<a data-sveltekit-preload-data="tap" href="/observations/{observation.id}">
-			<img {src} {alt} />
+			<img {src} />
 		</a>
-		<!-- <p>{observation.imgcount}</p> -->
 	</div>
 	<div class="description">
 		<a data-sveltekit-preload-data="tap" href="/observations/{observation.id}">
-			<h1>{observation.name}</h1>
+			{@render description()}
 		</a>
-
-		{#if !observation.year}
-			<h2>
-				{#each observation.styles as style}
-					<a data-sveltekit-preload-data="tap" href="/styles/{style}">{style}</a>
-				{/each}
-			</h2>
-		{:else}
-			<h2>
-				{#each observation.styles as style}
-					<a data-sveltekit-preload-data="tap" href="/styles/{style}"> {style},</a>
-				{/each}
-				{observation.year}
-			</h2>
-		{/if}
 	</div>
 </div>
 
 <style>
-	.gridcontainer {
-		display: grid;
-		grid-template-rows: 79fr 21fr;
-		aspect-ratio: 1 / 1;
-		max-width: 20vw;
-		min-width: 20vw;
-		height: auto;
-		display: block;
-		max-height: 100%;
-		background: #ffffff;
-		border: 1px solid black;
+    .container {
+        display: grid;
+        border: 1px solid black;
 		padding: 2%;
-	}
+        width: 20vw;
+        height: 24vw;
+        max-width: 20vw;
+    }
 
-	.photo {
-		max-height: 79%;
-		height: 100%;
-	}
+    /* tall normal */
+    .tall.normal {
+        width: 20vw;
+        height: 24vw;
+        max-width: 20vw;
+    }
 
-	img {
+    /* short normal */
+    .short.normal {
+        width: 15vw;
+        height: 15vw;
+    }
+
+    /* tall big */
+    .tall.big {
+        width: 30vw;
+        height: 36vw;
+    }
+
+    .short.big {
+        width: 36vw;
+        height: 36vw;
+    }
+
+    .short.mini {
+        max-width: 12vw;
+        max-height: 12vw;
+    }
+
+    .tall.mini {
+        max-width: 10vw;
+        max-height: 12vw;
+    }
+
+    img .tall {
 		width: 100%;
 		aspect-ratio: 1;
 		object-fit: cover;
 	}
 
-	.description {
+    .photo {
+		max-height: 79%;
+		height: 100%;
+	}
+
+    .description {
 		max-height: 100%;
 		height: 100%;
 		/* max-width: 100%; */
 	}
 
-	h1 {
-		margin: 0%;
-		margin-top: 2%;
-
-		font-size: 1.4em;
-		line-height: 1;
-		/* word-break: break-all; */
-		hyphens: auto;
-		overflow: hidden;
+    .big h1 {
+		font-size: 2em;
 	}
 
 	h2 {
@@ -97,5 +110,9 @@
 		hyphens: auto;
 		overflow: hidden;
 		font-family: 'Roboto';
+	}
+
+	.big h2 {
+		font-size: 1.4em;
 	}
 </style>

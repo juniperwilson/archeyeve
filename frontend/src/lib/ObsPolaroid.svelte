@@ -3,9 +3,11 @@
 	import '@fontsource/roboto';
 
 	let {
-		observation
+		observation,
+		big
 	}: {
 		observation: Observation;
+		big: Boolean
 	} = $props();
 
 	$inspect(observation)
@@ -16,7 +18,7 @@
 		' style found at ' + observation.address +'.';
 </script>
 
-<div class="gridcontainer">
+<div class={["gridcontainer", { big }]}>
 	<div class="photo">
 		<a data-sveltekit-preload-data="tap" href="/observations/{observation.id}">
 			<img {src} {alt} />
@@ -33,16 +35,23 @@
 <style>
 	.gridcontainer {
 		display: grid;
-		grid-template-rows: 79fr 21fr;
-		aspect-ratio: 610 / 510;
+		/* grid-template-rows: 79fr 21fr;
+		aspect-ratio: 610 / 510; */
 		max-width: 15vw;
 		min-width: 15vw;
-		height: auto;
+		height: 15vw;
 		display: block;
 		max-height: 100%;
 		background: #ffffff;
 		border: 1px solid black;
 		padding: 2%;
+	}
+
+	.big {
+		max-width: 36vw;
+		width: 36vw;
+		aspect-ratio: 610 / 510;
+		height: 36vw;
 	}
 
 	.photo {
@@ -70,5 +79,9 @@
 		/* word-break: break-all; */
 		hyphens: auto;
 		overflow: hidden;
+	}
+
+	.big h1 {
+		font-size: 2em;
 	}
 </style>

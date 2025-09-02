@@ -55,8 +55,8 @@
 		}
 		let s: Search = {
 			style: style,
-			aftyear: years[0],
-			befyear: years[1],
+			aftyear: handleFormatter(years[0]),
+			befyear: handleFormatter(years[1]),
 			lat1: lats[0],
 			lng1: longs[0],
 			lat2: lats[1],
@@ -112,10 +112,10 @@
 					range
 					{min}
 					{max}
-					bind:values
+					bind:values={years}
 				/>
 			</div>
-			<p>Structures built between {handleFormatter(values[0])} and {handleFormatter(values[1])}.</p>
+			<p>Structures built between {handleFormatter(years[0])} and {handleFormatter(years[1])}.</p>
 		</div>
 		<div class="areaSearch">
 			<SelectableButtonsBar
@@ -171,7 +171,7 @@
 			{/if}
 		</div>
 		<div class="searchButton">
-			<Button onclick={find} text="SEARCH" isSelected="false" />
+			<Button isSquare={false} onclick={find} text="SEARCH" isSelected="false" />
 		</div>
 	</form>
 </div>
@@ -185,7 +185,7 @@
 		border-width: 10%;
 		border-style: solid;
 		height: 100%;
-		max-width: 30vw;
+		max-width: 20vw;
 		border: 1px solid black;
 		text-align: center;
 		color: white;

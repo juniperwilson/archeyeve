@@ -10,7 +10,7 @@
 
 <div class="pagecontainer">
         <Menu />
-        <Polaroid {observation} tall={false} big={true}/>
+        <Polaroid {observation} big={true}/>
 </div>
 
 <style>

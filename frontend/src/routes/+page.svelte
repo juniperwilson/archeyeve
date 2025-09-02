@@ -26,7 +26,7 @@
         <Menu />
         <StylesBar selected={selectedButton} {titles} onclick={styleSearch} />
     <div class="content"> 
-        <GridView small={true} {observations} />
+        <GridView tall={false} {observations} />
         <SearchTab search={advSearch}/>
     </div>
 </div>
@@ -40,9 +40,6 @@
     }
 
     .content {
-        /* display: grid;
-        grid-template-columns: 75fr 25fr ;
-        grid-template-rows: 1fr; */
         display: flex;
         flex-direction: row;
         justify-content: center;

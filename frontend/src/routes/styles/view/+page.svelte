@@ -1,17 +1,20 @@
 <script lang="ts">
 	import type { Observation } from "$lib";
+	import { doSearch, type Search } from "$lib/api";
 	import GridView from "$lib/GridView.svelte";
 	import Menu from "$lib/Menu.svelte";
-	import Polaroid from "$lib/Polaroid.svelte";
-    
+	import SearchTab from "$lib/SearchTab.svelte";
     import type { PageData } from "../view/$types";
+
+    let { data }: { data: PageData } = $props();
+    let observations = data.observations
 
 </script>
 
 <div class="pagecontainer">
         <Menu />
         <div class="content"> 
-            <!-- <GridView {observations} /> -->
+            <GridView tall={true} {observations} />
         </div>
 </div>
 
@@ -24,9 +27,6 @@
     }
 
     .content {
-        /* display: grid;
-        grid-template-columns: 75fr 25fr ;
-        grid-template-rows: 1fr; */
         display: flex;
         flex-direction: row;
         justify-content: center;

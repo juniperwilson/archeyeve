@@ -15,7 +15,9 @@ export type Observation = {
     imgcount: number
 }
 
+
 export type Style = {
     id: number
     name: string
+    era: string
 }
