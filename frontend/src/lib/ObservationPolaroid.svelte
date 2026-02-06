@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Observation } from "$lib";
-    import { FILE_PATH } from '.';
+    import { BASE_PATH } from '.';
 	import Polaroid from "./Polaroid.svelte";
 
     let { 
@@ -13,17 +13,16 @@
         mini?: boolean
     } = $props()
 
-    let src = FILE_PATH
-    let alt = 'An observation of a ' + observation.condition + ' ' + observation.type + 
-		' building in the  ' + observation.styles[0] + 
-		' style found at ' + observation.address +'.'
-    alt = ""
+    // let alt = 'An observation of a ' + observation.condition + ' ' + observation.type + 
+	// 	' building in the  ' + observation.styles[0] + 
+	// 	' style found at ' + observation.address +'.'
+    // alt = ""
 
 </script>
 
 {#snippet photo()}
     <a data-sveltekit-preload-data="tap" href="/observations/{observation.id}">
-        <img {src} {alt} />
+        <img src="{BASE_PATH}/{observation.id}/0.png" />
     </a>
 {/snippet}
 

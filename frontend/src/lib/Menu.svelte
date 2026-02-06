@@ -58,4 +58,9 @@
 		align-items: center;
 		gap: 10px;
 	}
+
+	a {
+		color: white;
+		text-decoration: none;
+	}
 </style>

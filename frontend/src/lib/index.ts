@@ -1,5 +1,5 @@
 // place files you want to import through the `$lib` alias in this folder.
-export const FILE_PATH = "file:///Users/juniper/Documents/coding/archeyeve/images/0/1.jpeg"
+export const BASE_PATH = "/images"
 
 export type Observation = {
     id: number

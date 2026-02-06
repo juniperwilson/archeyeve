@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Style } from "$lib";
-    import { FILE_PATH } from '.';
+    import { BASE_PATH } from '.';
 	import Polaroid from "./Polaroid.svelte";
 
     let { 
@@ -13,7 +13,7 @@
         mini?: boolean
     } = $props()
 
-    let src = FILE_PATH
+    let src = BASE_PATH
     let alt = ""
 
 </script>
