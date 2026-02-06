@@ -15,6 +15,18 @@ ArchEyeve is social media and cataloging system for architecture enthusiasts. It
 
 ## Interface
 
+Here is an overview of the home page of ArchEyeve. Individual user's observations are joined into a single "Building" that contains the consolidated data.
+
 ![alt text](github/archeyeveHome.png)
+
+## The Idea
+
+My original idea for this project was to create a catalog of structures in such a way that they are searchable through an "evolutionary tree" of architectural styles.
+
+Below is a segment of the graph that represents all of the connections. An arrow from A -> B represents that B evolved or was influenced by style A.
+
+![alt text](github/stylestree.png)
+
+For example, when "Romanesque" is searched, all observations of Romanesque and it's descending styles (Neo-Romanesque) are listed.
 
 ![alt text](github/image.png)
