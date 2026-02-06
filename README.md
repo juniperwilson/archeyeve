@@ -13,6 +13,8 @@ ArchEyeve is social media and cataloging system for architecture enthusiasts. It
 - De-duplication and consolidation mechanisms for buildings with many observations
 - Categorization of architectural styles with artistic evolutionary lineage
 
-![alt text](github/archeyeve1.png)
+## Interface
+
+![alt text](github/archeyeveHome.png)
 
 ![alt text](github/image.png)
