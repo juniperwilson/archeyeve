@@ -40,3 +40,4 @@
     <Polaroid {photo} {description} tall={false}/>
 {/if}
 
+

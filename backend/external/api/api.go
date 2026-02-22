@@ -153,7 +153,7 @@ func getObservation(c *gin.Context) {
 }
 
 func getStyle(c *gin.Context) {
-	name := c.Query("name")
+	name := c.Param("name")
 
 	style, err := database.FindStyle(name)
 	if err != nil {
@@ -163,6 +163,15 @@ func getStyle(c *gin.Context) {
 	c.JSON(http.StatusOK, style)
 }
 
+func getAllStyles(c *gin.Context) {
+	styles, err := database.GetAllStyles()
+	if err != nil {
+		c.Error(apiError{messages: []string{"style not found"}})
+	}
+
+	c.JSON(http.StatusOK, styles)
+}
+
 func ApiRouting() *gin.Engine {
 	router := gin.Default()
 	router.Use(cors.Default())
@@ -170,7 +179,8 @@ func ApiRouting() *gin.Engine {
 	router.GET("/search", search)
 	router.GET("/observation", getObservation)
 	router.POST("/observation", createObservations)
-	router.GET("/style", getStyle)
+	router.GET("/style", getAllStyles)
+	router.GET("/style/:name", getStyle)
 
 	return router
 }

@@ -48,7 +48,7 @@ export async function getObservation(id: number): Promise<Observation> {
 }
 
 export async function fetchStyle(name: string): Promise<Style> {
-    const url = "http://localhost:8080/style?name=" + name
+    const url = "http://localhost:8080/style/:" + name + "?"
     let response = await fetch(url)
 
     return response.json()

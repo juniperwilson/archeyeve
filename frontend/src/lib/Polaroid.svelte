@@ -22,24 +22,27 @@
 </script>
 
 <div class="polaroid-wrapper">
-<div class="polaroid {size} {height}">
-	<div class="photo">
-		{@render photo()}
+	<div class="polaroid {size} {height}">
+		<div class="photo">
+			{@render photo()}
+		</div>
+		<div class="description">
+			{@render description()}
+		</div>
 	</div>
-	<div class="description">
-		{@render description()}
-	</div>
-</div>
 </div>
 
 <style>
+	.polaroid-wrapper {
+		width: max-content;
+	}
 	.polaroid {
 		display: grid;
 		border: 1px solid black;
 		padding: 6.5%;
 		width: 20vw;
 		height: 25vw;
-		max-width: 20vw;
+		/* max-width: 20vw; */
 	}
 
 	/* tall normal */
@@ -57,18 +60,19 @@
 
 	/* tall big */
 	.tall.big {
-		width: 30vw;
-		height: 36vw;
+		width: 28vw;
+		height: 35vw;
 	}
 
 	.short.big {
-		width: 36vw;
-		height: 36vw;
+		width: 25vw;
+		height: 25vw;
+		aspect-ratio: 1;
 	}
 
 	.short.mini {
-		max-width: 12vw;
-		max-height: 12vw;
+		max-width: 10vw;
+		max-height: 10vw;
 	}
 
 	.tall.mini {
@@ -105,6 +109,7 @@
 
     :global(.polaroid.tall .photo img) {
         width: 100%;
+		height: 100%;
         object-fit: cover;
         aspect-ratio: 1;
 	}
@@ -127,8 +132,6 @@
 	}
 
 	:global(.polaroid.normal h2) {
-		/* margin: 0%;
-		margin-top: 2%; */
 		font-size: 1em;
 		line-height: 1;
 		hyphens: auto;
@@ -138,5 +141,9 @@
 
 	:global(.polaroid.big h2) {
 		font-size: 1.4em;
+	}
+
+	:global(.polaroid.mini h1) {
+		font-size: 0.8em;
 	}
 </style>
